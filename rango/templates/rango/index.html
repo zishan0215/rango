@@ -1,0 +1,43 @@
+{% load staticfiles %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Rango</title>
+</head>
+<body>
+    {% if user.is_authenticated %}
+        <h1>Rango says... Hello {{ user.username }}!</h1>
+        <a href="{% url 'rango:restricted' %}">Restricted Page</a>
+        <a href="{% url 'rango:logout' %}">Logout</a>
+    {% else %}
+        <h1>Rango says... Hello World!</h1>
+        <a href="{% url 'rango:login' %}">Login</a>
+        <a href="{% url 'rango:register' %}">Register Here</a>
+    {% endif %}
+
+    <a href="{% url 'rango:add_category' %}">Add new category</a>
+
+    <h3>Categories</h3>
+    {% if categories %}
+        <ul>
+            {% for category in categories %}
+                <li><a href="{% url 'rango:category' category.slug %}">{{ category.name }}</a></li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <strong>No categories present</strong>
+    {% endif %}
+
+    <h3>Pages</h3>
+    {% if pages %}
+        <ul>
+            {% for page in pages %}
+                <li><a href="{{ page.url }}">{{ page.title }}</a></li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <strong>No pages present</strong>
+    {% endif %}
+</body>
+</html>
