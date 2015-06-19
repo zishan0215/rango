@@ -1,11 +1,8 @@
+{% extends 'rango/base.html' %}
 {% load staticfiles %}
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Rango</title>
-</head>
-<body>
+{% block title %}{% endblock %}
+
+{% block body_block %}
     {% if user.is_authenticated %}
         <h1>Rango says... Hello {{ user.username }}!</h1>
         <a href="{% url 'rango:restricted' %}">Restricted Page</a>
@@ -39,5 +36,4 @@
     {% else %}
         <strong>No pages present</strong>
     {% endif %}
-</body>
-</html>
+{% endblock %}
