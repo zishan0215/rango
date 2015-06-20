@@ -4,6 +4,7 @@ from forms import CategoryForm, PageForm, UserForm, UserProfileForm
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.decorators import login_required
+from datetime import datetime
 
 def index(request):
     category_list = Category.objects.order_by('-likes')[:5]
@@ -13,7 +14,26 @@ def index(request):
         'categories': category_list,
         'pages': page_list,
     }
-    return render(request, 'rango/index.html', context_dict)
+    visits = int(request.COOKIES.get('visits', '1'))
+    reset_last_visit_time = False
+    response = render(request, 'rango/index.html', context_dict)
+    if 'last_visit' in request.COOKIES:
+        last_visit = request.COOKIES['last_visit']
+        print ">>>>"+str(type(last_visit))
+        last_visit_time = datetime.strptime(last_visit[:-7], "%Y-%m-%d %H:%M:%S")
+
+        if (datetime.now() - last_visit_time).days > 0:
+            visits += 1
+            reset_last_visit_time = True
+    else:
+        reset_last_visit_time = True
+        context_dict['visits'] = visits
+        response = render(request, 'rango/index.html', context_dict)
+
+    if reset_last_visit_time:
+        response.set_cookie('last_visit', datetime.now())
+        response.set_cookie('visits', visits)
+    return response
 
 def about(request):
     return render(request, 'rango/about.html', {})
